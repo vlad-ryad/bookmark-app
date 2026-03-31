@@ -23,8 +23,11 @@ import ProfileAvatar from '../components/ProfileAvatar.vue';
   max-width: 1450px;
   margin: 140px auto 0 auto;
 }
-
 .nav {
-  min-width: 400px;
+  min-width: 320px;
+}
+
+main {
+  width: 100%;
 }
 </style>

@@ -1,13 +1,19 @@
 <script setup lang="ts">
 import ButtonText from '@/components/ButtonText.vue';
-import { useRouter } from 'vue-router';
+import InputString from '@/components/InputString.vue';
+import { ref } from 'vue';
+//import { useRouter } from 'vue-router';
 
-const router = useRouter();
+//const router = useRouter();
+const form = ref<{ email?: string; password?: string }>({});
 
-function redirectToMain() {
-  router.push({
-    name: 'main',
-  });
+function onSubmit(event: Event) {
+  event.preventDefault();
+  if (!form.value.email || !form.value.password) {
+    return;
+  }
+
+  form.value = {};
 }
 </script>
 
@@ -15,8 +21,14 @@ function redirectToMain() {
   <div class="auth">
     <div class="auth__form">
       <h1 class="auth__header">Bookmarkly</h1>
-      <form class="auth__form">
-        <ButtonText type="submit" @click="redirectToMain">Вход</ButtonText>
+      <form class="auth__form" @submit="onSubmit">
+        <InputString v-model="form.email" placeholder="Email" />
+        <InputString
+          v-model="form.password"
+          placeholder="Пароль"
+          type="password"
+        />
+        <ButtonText type="submit">Вход</ButtonText>
       </form>
     </div>
   </div>

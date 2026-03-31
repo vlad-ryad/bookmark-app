@@ -17,7 +17,7 @@ onMounted(() => {
       alt="Изображение пользователя"
     />
     <div>
-      Привет, <strong>{{ store.profile?.name }}</strong>
+      Привет, <strong>{{ store.profile.name }}</strong>
     </div>
   </div>
 </template>
