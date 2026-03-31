@@ -1,19 +1,28 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import AuthView from './views/AuthView.vue';
-import MainView from './views/MainView.vue';
 
 export const router = createRouter({
   routes: [
     {
+      path: '/:pathMatch(.*)*',
+      name: 'NotFound',
+      component: () => import('./views/NotFoundView.vue'),
+    },
+    {
       path: '/',
-      component: AuthView,
+      component: () => import('./views/AuthView.vue'),
     },
     {
       path: '/main',
-      component: MainView,
-      name: 'main',
+      component: () => import('./views/MainView.vue'),
+      children: [
+        {
+          path: '',
+          component: () => import('./views/IndexView.vue'),
+          name: 'main',
+        },
+        { path: ':alias', component: () => import('./views/CategoryView.vue') },
+      ],
     },
   ],
-
   history: createWebHistory(),
 });
