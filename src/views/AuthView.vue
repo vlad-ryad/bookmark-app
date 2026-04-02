@@ -1,18 +1,29 @@
 <script setup lang="ts">
 import ButtonText from '@/components/ButtonText.vue';
 import InputString from '@/components/InputString.vue';
-import { ref } from 'vue';
-//import { useRouter } from 'vue-router';
+import { useAuthStore } from '@/stores/auth.store';
+import { ref, watch } from 'vue';
+import { useRouter } from 'vue-router';
 
-//const router = useRouter();
+const router = useRouter();
 const form = ref<{ email?: string; password?: string }>({});
+const authStore = useAuthStore();
+
+watch(
+  () => authStore.getToken,
+  () => {
+    if (authStore.getToken) {
+      router.push({ name: 'main' });
+    }
+  },
+);
 
 function onSubmit(event: Event) {
   event.preventDefault();
   if (!form.value.email || !form.value.password) {
     return;
   }
-
+  authStore.login(form.value.email, form.value.password);
   form.value = {};
 }
 </script>
