@@ -19,11 +19,6 @@ function toggleEdit() {
   isEdited.value = !isEdited.value;
 }
 
-// function deleteCategory() {
-//   categoryStore.deleteCategory(category.id);
-//   router.push({ name: 'main' });
-// }
-
 function updateCategory() {
   if (!newCategoryName.value) {
     return;
