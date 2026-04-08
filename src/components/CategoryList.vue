@@ -28,7 +28,7 @@ function logout() {
       }}</RouterLink>
     </li>
     <li>
-      <ButtonIcon @click="store.categories">
+      <ButtonIcon @click="store.createCategory">
         <IconPlus />
       </ButtonIcon>
     </li>
