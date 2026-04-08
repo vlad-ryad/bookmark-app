@@ -1,22 +1,34 @@
 <script setup lang="ts">
+import BookmarkAdd from '@/components/BookmarkAdd.vue';
+import BookmarkCard from '@/components/BookmarkCard.vue';
+import BookmarkSort from '@/components/BookmarkSort.vue';
+import CategoryHeader from '@/components/CategoryHeader.vue';
 import type { Category } from '@/interfaces/category.interface';
-import { useCategoryStore } from '@/stores/categories.store';
+
 import { useBookmarkStore } from '@/stores/bookmark.store';
+import { useCategoryStore } from '@/stores/categories.store';
 import { onMounted, ref, watch } from 'vue';
 import { useRoute } from 'vue-router';
-import CategoryHeader from '@/components/CategoryHeader.vue';
 
 const route = useRoute();
 const categoryStore = useCategoryStore();
-const category = ref<Category>();
 const bookmarkStore = useBookmarkStore();
+const category = ref<Category>();
+
+function sortBookmarks(sort: string) {
+  bookmarkStore.activeSort = sort;
+  if (category.value) {
+    bookmarkStore.fetchBookmarks(category.value.id, bookmarkStore.activeSort);
+  }
+}
 
 onMounted(() => {
   const alias = route.params.alias;
+  // Проверяем, что alias существует и это строка
   if (alias && typeof alias === 'string') {
     category.value = categoryStore.getCategoryByAlias(alias);
     if (category.value) {
-      bookmarkStore.fetchBookmarks(category.value.id);
+      bookmarkStore.fetchBookmarks(category.value.id, bookmarkStore.activeSort);
     }
   }
 });
@@ -26,23 +38,41 @@ watch(
     alias: route.params.alias,
     categories: categoryStore.categories,
   }),
-  (newValue) => {
-    const alias = newValue.alias;
+  (data) => {
+    const alias = data.alias;
+    // Проверяем, что alias существует и это строка
     if (alias && typeof alias === 'string') {
       category.value = categoryStore.getCategoryByAlias(alias);
-
       if (category.value) {
-        bookmarkStore.fetchBookmarks(category.value.id);
+        bookmarkStore.fetchBookmarks(
+          category.value.id,
+          bookmarkStore.activeSort,
+        );
       }
     }
   },
-  { immediate: true },
 );
 </script>
 
 <template>
   <CategoryHeader v-if="category" :category="category" />
-
-  <!-- {{ category?.name }}
-  {{ bookmarkStore.bookmarks.length }} -->
+  <BookmarkSort :option="bookmarkStore.activeSort" @sort="sortBookmarks" />
+  <div class="category-list">
+    <BookmarkCard
+      v-for="item in bookmarkStore.bookmarks"
+      :key="item.id"
+      v-bind="item"
+    />
+    <BookmarkAdd v-if="category" :category_id="category.id" />
+  </div>
 </template>
+
+<style scoped>
+.category-list {
+  margin-top: 30px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(10, 350px);
+  gap: 24px;
+}
+</style>
